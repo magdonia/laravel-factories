@@ -242,11 +242,11 @@ composer require magdonia/laravel-factories
 Add the `HasFactory` trait to your request classes:
 
 ```php
-use Magdonia\LaravelFactories\Request\HasFactory;
+use Magdonia\LaravelFactories\Concerns\HasRequestFactory;
 
 class YourRequest extends FormRequest
 {
-    use HasFactory;
+    use HasRequestFactory;
 }
 ```
 

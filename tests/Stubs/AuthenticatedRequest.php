@@ -3,11 +3,11 @@
 namespace Magdonia\LaravelFactories\Tests\Stubs;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Magdonia\LaravelFactories\Request\HasFactory;
+use Magdonia\LaravelFactories\Concerns\HasRequestFactory;
 
 class AuthenticatedRequest extends FormRequest
 {
-    use HasFactory;
+    use HasRequestFactory;
 
     /**
      * Determine if the user is authorized to make this request.

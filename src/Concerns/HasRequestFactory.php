@@ -1,10 +1,10 @@
 <?php
 
-namespace Magdonia\LaravelFactories\Request;
+namespace Magdonia\LaravelFactories\Concerns;
 
 use Magdonia\LaravelFactories\RequestFactory;
 
-trait HasFactory
+trait HasRequestFactory
 {
     public static function factory(): RequestFactory
     {

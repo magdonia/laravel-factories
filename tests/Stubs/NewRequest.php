@@ -3,12 +3,12 @@
 namespace Magdonia\LaravelFactories\Tests\Stubs;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Magdonia\LaravelFactories\Request\HasFactory;
+use Magdonia\LaravelFactories\Concerns\HasRequestFactory;
 use Magdonia\LaravelFactories\RequestFactory;
 
 class NewRequest extends FormRequest
 {
-    use HasFactory;
+    use HasRequestFactory;
 
     /**
      * @return RequestFactory<AnotherRequestFactory>
