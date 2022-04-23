@@ -1,0 +1,54 @@
+{
+    "name": "magdonia/laravel-factories",
+    "description": "Laravel factories",
+    "keywords": [
+        "library",
+        "laravel-factories"
+    ],
+    "homepage": "https://github.com/magdonia/laravel-factories",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Morteza Poussaneh",
+            "email": "morteza@protonmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "illuminate/support": "^9.9.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.8",
+        "orchestra/testbench": "^7.4",
+        "phpstan/phpstan": "^1.5",
+        "phpunit/phpunit": "^9.5.20"
+    },
+    "autoload": {
+        "psr-4": {
+            "Magdonia\\LaravelFactories\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Magdonia\\LaravelFactories\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
+        "phpstan": "vendor/bin/phpstan analyse",
+        "cs-fix": "./vendor/bin/php-cs-fixer fix"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Magdonia\\LaravelFactories\\LaravelFactoriesServiceProvider"
+            ]
+        }
+    }
+}
