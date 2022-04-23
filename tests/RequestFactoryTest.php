@@ -15,7 +15,7 @@ use Magdonia\LaravelFactories\Tests\Stubs\SimpleRequest;
 use Magdonia\LaravelFactories\Tests\Stubs\SimpleRequestFactory;
 use Orchestra\Testbench\TestCase;
 
-class FactoryTest extends TestCase
+class RequestFactoryTest extends TestCase
 {
     use ReflectionHelpers;
     use WithFaker;
