@@ -123,7 +123,7 @@ abstract class RequestFactory
      */
     public function create(?array $attributes = []): RequestFactory
     {
-        return $this->states($attributes);
+        return $this->state($attributes);
     }
 
     /**
@@ -148,12 +148,18 @@ abstract class RequestFactory
     }
 
     /**
-     * @param string $key
+     * @param string|array<string|int, mixed> $keys
      * @return RequestFactory<TRequestFactory>
      */
-    public function unset(string $key): RequestFactory
+    public function unset(string|array $keys): RequestFactory
     {
-        unset($this->parameters[$key]);
+        if (is_string($keys)) {
+            $keys = func_get_args();
+        }
+
+        foreach ($keys as $key) {
+            unset($this->parameters[$key]);
+        }
 
         return $this;
     }
@@ -162,7 +168,7 @@ abstract class RequestFactory
      * @param array<string|int, mixed> $attributes
      * @return RequestFactory<TRequestFactory>
      */
-    public function states(?array $attributes = []): RequestFactory
+    public function state(?array $attributes = []): RequestFactory
     {
         if ($attributes) {
             foreach ($attributes as $key => $value) {
@@ -179,7 +185,7 @@ abstract class RequestFactory
      */
     public function make(?array $attributes = []): FormRequest
     {
-        $this->states($attributes);
+        $this->state($attributes);
         $requestClassName = $this->request ?? self::resolveRequest(static::class); /* @phpstan-ignore-line */
         /** @var FormRequest $request */
         $request = $requestClassName::createFromBase(Request::create($this->uri, $this->method, $this->parameters, $this->cookies, $this->files, $this->server, $this->content));

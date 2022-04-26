@@ -83,7 +83,7 @@ class RequestFactoryTest extends TestCase
         $this->assertEquals($form[$key], $value);
     }
 
-    public function test_it_can_have_states(): void
+    public function test_it_can_have_state(): void
     {
         $value = $this->faker->sentence();
 
@@ -100,6 +100,20 @@ class RequestFactoryTest extends TestCase
         $this->assertArrayHasKey('title', $request->form());
 
         $this->assertArrayNotHasKey('title', $request->unset('title')->form());
+    }
+
+    public function test_it_can_unset_array_of_inputs(): void
+    {
+        $request = SimpleRequest::factory();
+        $request->state(['first' => 'foo', 'second' => 'bar']);
+
+        $this->assertArrayHasKey('first', $request->form());
+        $this->assertArrayHasKey('second', $request->form());
+
+        $request->unset(['first', 'second']);
+
+        $this->assertArrayNotHasKey('first', $request->form());
+        $this->assertArrayNotHasKey('second', $request->form());
     }
 
     public function test_it_should_validate_request(): void
@@ -254,21 +268,21 @@ class RequestFactoryTest extends TestCase
         );
     }
 
-    public function test_states_should_set_given_states(): void
+    public function test_state_should_set_given_state(): void
     {
         $key1 = $this->faker->word();
         $key2 = $this->faker->randomDigit();
         $value1 = $this->faker->word();
         $value2 = null;
 
-        $states = [
+        $state = [
             $key1 => $value1,
             $key2 => $value2,
         ];
 
         $this->assertEquals(
-            $states,
-            (new class () extends RequestFactory {})->states($states)->form()
+            $state,
+            (new class () extends RequestFactory {})->state($state)->form()
         );
     }
 
