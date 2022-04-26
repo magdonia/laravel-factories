@@ -4,7 +4,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/magdonia/laravel-factories?style=flat-square)](https://packagist.org/packages/magdonia/laravel-factories)
 ![GitHub Actions](https://github.com/magdonia/laravel-factories/actions/workflows/run-tests.yml/badge.svg)
 
-This is a package to make it easy writing tests for Laravel application.
+This is a package to make it easy to write tests for Laravel application.
 
 ## Example usages
 Feature tests:
