@@ -19,15 +19,9 @@ jobs:
         stability: [prefer-lowest, prefer-stable]
         exclude:
           - laravel: 9.*
-<<<<<<< HEAD
             testbench: ^6.23
           - laravel: 8.*
               testbench: ^7.4
-=======
-            testbench: ^6.*
-          - laravel: 8.*
-              testbench: ^7.*
->>>>>>> 9563891dd518febce8ccc1f53d62935a0824fbbd
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
