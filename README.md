@@ -424,8 +424,8 @@ composer require magdonia/laravel-factories
 ```
 
 ## Usage
-
-Add the `HasFactory` trait to your request classes:
+### Requests
+Add the `HasRequestFactory` trait to your request classes:
 
 ```php
 use Magdonia\LaravelFactories\Concerns\HasRequestFactory;
@@ -455,6 +455,38 @@ class AnotherRequestFactory extends RequestFactory
     }
 }
 ```
+### Resources
+Add the `HasResourceFactory` trait to your resource classes:
+
+```php
+use Magdonia\LaravelFactories\Concerns\HasResourceFactory;
+
+class YourResource extends JsonResource
+{
+    use HasResourceFactory;
+}
+```
+
+Add a factory class for your request in your request factories directory. 
+
+```php
+<?php
+
+namespace Tests\RequestFactories;
+
+use Magdonia\LaravelFactories\ResourceFactory;
+
+class AnotherResourceFactory extends ResourceFactory
+{
+    public function definition(): \Closure
+    {
+        return function (AssertableJson $json) {
+            // Your assertion goes here
+        });
+    }
+}
+```
+
 > **_NOTE:_** You can modify factory's directory to be anything you want in config.
 
 ### Testing
