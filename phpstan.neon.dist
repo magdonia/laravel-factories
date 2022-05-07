@@ -7,3 +7,4 @@ parameters:
         - src
         - config
     tmpDir: build/phpstan
+    checkGenericClassInNonGenericObjectType: false

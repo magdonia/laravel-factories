@@ -7,6 +7,8 @@
 This is a package to make it easy to write tests for Laravel application.
 
 ## Example usages
+
+### Request Factories
 Feature tests:
 ```php
 // before
@@ -229,6 +231,190 @@ public function test_user_id_is_required_when_request_comes_as_get(): void
 }
 ```
 
+### Resource Factories
+Feature tests:
+
+Testing a single resource
+```php
+// before
+public function test_it_should_show_a_post(): void
+{
+    $post = Post::factory()->create();
+    $response = $this->getJson(route('post.show', $post));
+    $response->assertJson(function (AssertableJson $json) use ($post) {
+        $json
+            ->has('data', function(AssertableJson $json) use ($post) {
+                $json
+                    ->where('title', $post->title)
+                    ->where('description', $post->description)
+                    ->where('image', $post->image)
+                    ->where('created_at', $post->created_at->toJSON())
+                    ->where('category', [
+                        'id' => $post->category->id,
+                        'title' => $post->category->title,
+                    ]);
+            });
+    });
+}
+
+// after
+public function test_it_should_show_a_post(): void
+{
+    $post = Post::factory()->create();
+    $response = $this->getJson(route('post.show', $post));
+    $response->assertJson(PostResource::factory()->model($post->load('category'))->create());
+}
+```
+
+Testing a pagination
+```php
+// before
+public function test_it_should_return_posts(): void
+{
+    $posts = Post::factory()->count(2)->create();
+    $response = $this->getJson(route('post.index'));
+    $response->assertJson(function (AssertableJson $json) use ($posts) {
+        $json
+            ->has('data', function (AssertableJson $json) {
+                $json
+                    ->has(0, function (AssertableJson $json) {
+                        ->where('title', $posts->first()->title)
+                        ->where('description', $posts->first()->description)
+                        ->where('image', $posts->first()->image)
+                        ->where('created_at', $posts->first()->created_at->toJSON())
+                        ->where('category', [
+                            'id' => $posts->first()->category->id,
+                            'title' => $posts->first()->category->title,
+                        ]);
+                    })
+                    ->has(1, function (AssertableJson $json) {
+                        ->where('title', $posts->last()->title)
+                        ->where('description', $posts->last()->description)
+                        ->where('image', $posts->last()->image)
+                        ->where('created_at', $posts->last()->created_at->toJSON())
+                        ->where('category', [
+                            'id' => $posts->last()->category->id,
+                            'title' => $posts->last()->category->title,
+                        ]);
+                    })
+            })
+            ->has('meta', function (AssertableJson $json) {
+                $json
+                    ->where('current_page', 1)
+                    ->where('from', 1)
+                    ->where('to', 2)
+                    ->where('total', 2)
+                    ->etc();
+            })
+            ->etc();
+    });
+}
+
+// after
+public function test_it_should_show_a_post(): void
+{
+    $posts = Post::factory()->count(2)->create();
+    $response = $this->getJson(route('post.index'));
+    $response->assertJson(
+        PostResource::factory()
+            ->pagination(
+                collection: $posts->each->load('category'),
+            )
+            ->create()
+    );
+}
+```
+Getting actual response from resource class
+
+Single resource
+```php
+public function test_it_should_return_single_resource_response(): void
+{
+    $post = Post::factory()->create();
+    $this->assertEquals([
+        'data' => [
+            'id' => $post->id,
+            'title' => $post->title,
+            'description' => $post->description,
+        ]
+    ], PostResource::factory()->model($post)->response())
+}
+```
+Collection resource
+```php
+public function test_it_should_return_collection_resource_response(): void
+{
+    $posts = Post::factory()->count(2)->create();
+    $this->assertEquals([
+        'data' => [
+            [
+                'id' => $posts->first()->id,
+                'title' => $posts->first()->title,
+                'description' => $posts->first()->description,
+            ],
+            [
+                'id' => $posts->last()->id,
+                'title' => $posts->last()->title,
+                'description' => $posts->last()->description,
+            ]
+        ],
+    ], PostResource::factory()->collection($posts)->response())
+}
+```
+Pagination resource
+```php
+public function test_it_should_return_pagination_resource_response(): void
+{
+    $posts = Post::factory()->count(2)->create();
+    $this->assertEquals([
+        'data' => [
+            [
+                'id' => $posts->first()->id,
+                'title' => $posts->first()->title,
+                'description' => $posts->first()->description,
+            ],
+            [
+                'id' => $posts->last()->id,
+                'title' => $posts->last()->title,
+                'description' => $posts->last()->description,
+            ]
+        ],
+        'meta' => [
+                'current_page' => 1,
+                'from' => 1,
+                'to' => 2,
+                'total' => 2,
+                'last_page' => 1,
+                'links' => [
+                    [
+                        'url' => null,
+                        'label' => '&laquo; Previous',
+                        'active' => false,
+                    ],
+                    [
+                        'url' => '/?page=1',
+                        'label' => '1',
+                        'active' => true,
+                    ],
+                    [
+                        'url' => null,
+                        'label' => 'Next &raquo;',
+                        'active' => false,
+                    ],
+                ],
+                'path' => '/',
+                'per_page' => 15,
+            ],
+            'links' => [
+                'first' => '/?page=1',
+                'last' => '/?page=1',
+                'prev' => null,
+                'next' => null,
+            ],
+        ],
+    ], PostResource::factory()->pagination(Post::paginate())->response())
+}
+```
 ## Installation
 
 You can install the package via composer:
