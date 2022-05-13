@@ -45,4 +45,15 @@ class SimpleRequestFactory extends RequestFactory
 
         return $this;
     }
+
+    /**
+     * @param string $title
+     * @return $this
+     */
+    public function title(string $title): self
+    {
+        $this->set('title', $title);
+
+        return $this;
+    }
 }

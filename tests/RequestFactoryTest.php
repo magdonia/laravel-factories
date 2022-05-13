@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use Magdonia\LaravelFactories\RequestFactory;
 use Magdonia\LaravelFactories\Tests\Stubs\AnotherRequestFactory;
 use Magdonia\LaravelFactories\Tests\Stubs\AuthenticatedRequest;
+use Magdonia\LaravelFactories\Tests\Stubs\ConfiguredRequest;
 use Magdonia\LaravelFactories\Tests\Stubs\NewRequest;
 use Magdonia\LaravelFactories\Tests\Stubs\SimpleRequest;
 use Magdonia\LaravelFactories\Tests\Stubs\SimpleRequestFactory;
@@ -81,6 +82,19 @@ class RequestFactoryTest extends TestCase
 
         $this->assertArrayHasKey($key, $form);
         $this->assertEquals($form[$key], $value);
+    }
+
+    public function test_configure_should_be_called_before_definition(): void
+    {
+        $factory = ConfiguredRequest::factory();
+        $this->assertEquals($factory->title, $factory->form()['title']);
+    }
+
+    public function test_states_can_override_configure_setup(): void
+    {
+        $title = $this->faker->sentence();
+        $factory = ConfiguredRequest::factory()->title($title);
+        $this->assertEquals($title, $factory->form()['title']);
     }
 
     public function test_it_can_have_state(): void
@@ -305,6 +319,13 @@ class RequestFactoryTest extends TestCase
 
         $response = AuthenticatedRequest::factory()->withTitle()->as($user)->validate();
         $response->assertSuccessful();
+    }
+
+    public function test_set_should_remove_key_from_unset(): void
+    {
+        $form = SimpleRequest::factory()->withoutTitle()->title($this->faker->word())->form();
+
+        $this->assertArrayHasKey('title', $form);
     }
 
     public function test_validate_can_set_attributes(): void
