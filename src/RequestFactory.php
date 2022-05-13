@@ -37,6 +37,11 @@ abstract class RequestFactory
     protected array $parameters = [];
 
     /**
+     * @var array<int, int|string>
+     */
+    protected array $unset = [];
+
+    /**
      * @var array<string|int, mixed>
      */
     protected array $cookies = [];
@@ -65,7 +70,6 @@ abstract class RequestFactory
     {
         $this->faker = $this->withFaker();
         $this->configure();
-        $this->parameters = $this->definition();
     }
 
     protected function configure(): void
@@ -121,9 +125,27 @@ abstract class RequestFactory
      * @param array<string|int, mixed>|null $attributes
      * @return RequestFactory<TRequestFactory>
      */
+    private function setup(?array $attributes = []): RequestFactory
+    {
+        $this->state($attributes);
+        $this->parameters = $this->definition() + $this->parameters;
+
+        if (count($this->unset)) {
+            foreach ($this->unset as $key) {
+                unset($this->parameters[$key]);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param array<string|int, mixed>|null $attributes
+     * @return RequestFactory<TRequestFactory>
+     */
     public function create(?array $attributes = []): RequestFactory
     {
-        return $this->state($attributes);
+        return $this->setup($attributes);
     }
 
     /**
@@ -143,12 +165,15 @@ abstract class RequestFactory
     public function set(string|int $key, mixed $value): RequestFactory
     {
         $this->parameters[$key] = $value;
+        if (($key = array_search($key, $this->unset)) !== false) {
+            unset($this->unset[$key]);
+        }
 
         return $this;
     }
 
     /**
-     * @param string|array<string|int, mixed> $keys
+     * @param string|array<int, int|string> $keys
      * @return RequestFactory<TRequestFactory>
      */
     public function unset(string|array $keys): RequestFactory
@@ -157,9 +182,7 @@ abstract class RequestFactory
             $keys = func_get_args();
         }
 
-        foreach ($keys as $key) {
-            unset($this->parameters[$key]);
-        }
+        $this->unset = array_merge($this->unset, $keys);
 
         return $this;
     }
@@ -185,7 +208,7 @@ abstract class RequestFactory
      */
     public function make(?array $attributes = []): FormRequest
     {
-        $this->state($attributes);
+        $this->setup($attributes);
         $requestClassName = $this->request ?? self::resolveRequest(static::class); /* @phpstan-ignore-line */
         /** @var FormRequest $request */
         $request = $requestClassName::createFromBase(Request::create($this->uri, $this->method, $this->parameters, $this->cookies, $this->files, $this->server, $this->content));
