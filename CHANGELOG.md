@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-factories` will be documented in this file
 
+## v1.4.1 - 2022-05-13
+
+## What's Changed
+
+- Fix override definition with configuration setup on request factory by @MortezaPoussaneh in https://github.com/magdonia/laravel-factories/pull/3
+
+**Full Changelog**: https://github.com/magdonia/laravel-factories/compare/v1.4.0...v1.4.1
+
 ## v1.4.0 - 2022-05-07
 
 ## What's Changed
