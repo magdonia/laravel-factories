@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-factories` will be documented in this file
 
+## v1.8.0 - 2022-05-15
+
+## What's Changed
+
+- Add the ability to call nested model resources by @MortezaPoussaneh in https://github.com/magdonia/laravel-factories/pull/8
+
+**Full Changelog**: https://github.com/magdonia/laravel-factories/compare/v1.7.0...v1.8.0
+
 ## v1.7.0 - 2022-05-15
 
 ## What's Changed
