@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-factories` will be documented in this file
 
+## v1.5.0 - 2022-05-15
+
+## What's Changed
+
+- Add json method to resource by @MortezaPoussaneh in https://github.com/magdonia/laravel-factories/pull/5
+
+**Full Changelog**: https://github.com/magdonia/laravel-factories/compare/v1.4.2...v1.5.0
+
 ## v1.4.2 - 2022-05-15
 
 ## What's Changed
