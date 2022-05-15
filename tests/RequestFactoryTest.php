@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Magdonia\LaravelFactories\RequestFactory;
 use Magdonia\LaravelFactories\Tests\Stubs\AnotherRequestFactory;
@@ -37,6 +38,9 @@ class RequestFactoryTest extends TestCase
 
     public function test_it_should_resolve_factory_class_name_for_given_request_class(): void
     {
+        Config::set('laravel-factories.default-request-factories-directory', 'Factories\\Requests\\');
+        Config::set('laravel-factories.default-request-directory', 'App\\Requests\\');
+
         $requestClass = config('laravel-factories.default-request-directory') . 'AnyRequest';
         /* @phpstan-ignore-next-line */
         $factoryClass = RequestFactory::resolveFactory($requestClass);
@@ -220,6 +224,9 @@ class RequestFactoryTest extends TestCase
 
     public function test_it_should_resolve_request_class_name_for_given_factory_class_name(): void
     {
+        Config::set('laravel-factories.default-request-factories-directory', 'Factories\\Requests\\');
+        Config::set('laravel-factories.default-request-directory', 'App\\Requests\\');
+
         $requestClass = config('laravel-factories.default-request-factories-directory') . 'AnyRequestFactory';
         $factoryClass = RequestFactory::resolveRequest($requestClass); /** @phpstan-ignore-line */
 

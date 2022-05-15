@@ -49,7 +49,7 @@ abstract class ResourceFactory
     {
         /** @phpstan-ignore-next-line  */
         return Str::of($requestClass)
-            ->prepend(config('default-resource-factories-directory'))
+            ->prepend(config('laravel-factories.default-resource-factories-directory'))
             ->replace(config('laravel-factories.default-resource-directory'), '')
             ->append('Factory');
     }
@@ -62,7 +62,7 @@ abstract class ResourceFactory
     {
         /** @phpstan-ignore-next-line  */
         return Str::of($factoryClass)
-            ->replace(config('laravel-factories.default-resource-directory'), config('default-resource-factories-directory'))
+            ->replace(config('laravel-factories.default-resource-factories-directory'), config('laravel-factories.default-resource-directory'))
             ->replace('Factory', '');
     }
 
