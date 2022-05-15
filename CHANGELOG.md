@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-factories` will be documented in this file
 
+## v1.7.0 - 2022-05-15
+
+## What's Changed
+
+- Add toArray method to resource factory by @MortezaPoussaneh in https://github.com/magdonia/laravel-factories/pull/7
+
+**Full Changelog**: https://github.com/magdonia/laravel-factories/compare/v1.6.0...v1.7.0
+
 ## v1.6.0 - 2022-05-15
 
 ## What's Changed
