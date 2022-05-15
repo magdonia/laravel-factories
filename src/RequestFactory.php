@@ -104,7 +104,7 @@ abstract class RequestFactory
     {
         /** @phpstan-ignore-next-line  */
         return Str::of($requestClass)
-            ->prepend(config('default-request-factories-directory'))
+            ->prepend(config('laravel-factories.default-request-factories-directory'))
             ->replace(config('laravel-factories.default-request-directory'), '')
             ->append('Factory');
     }
@@ -117,7 +117,7 @@ abstract class RequestFactory
     {
         /** @phpstan-ignore-next-line  */
         return Str::of($factoryClass)
-            ->replace(config('laravel-factories.default-request-directory'), config('default-request-factories-directory'))
+            ->replace(config('laravel-factories.default-request-factories-directory'), config('laravel-factories.default-request-directory'))
             ->replace('Factory', '');
     }
 

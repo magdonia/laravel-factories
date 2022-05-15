@@ -4,6 +4,7 @@ namespace Magdonia\LaravelFactories\Tests;
 
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Testing\AssertableJsonString;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Magdonia\LaravelFactories\ResourceFactory;
@@ -28,6 +29,9 @@ class ResourceFactoryTest extends TestCase
 
     public function test_it_should_resolve_factory_class_name_for_given_resource_class(): void
     {
+        Config::set('laravel-factories.default-resource-factories-directory', 'Factories\\Resources\\');
+        Config::set('laravel-factories.default-resource-directory', 'App\\Resources\\');
+
         $resourceClass = config('laravel-factories.default-resource-directory') . 'AnyResource';
         /* @phpstan-ignore-next-line */
         $factoryClass = ResourceFactory::resolveFactory($resourceClass);
@@ -49,6 +53,9 @@ class ResourceFactoryTest extends TestCase
 
     public function test_it_should_resolve_resource_class_name_for_given_factory_class_name(): void
     {
+        Config::set('laravel-factories.default-resource-factories-directory', 'Factories\\Resources\\');
+        Config::set('laravel-factories.default-resource-directory', 'App\\Resources\\');
+
         $resourceClass = config('laravel-factories.default-resource-factories-directory') . 'AnyResourceFactory';
         $factoryClass = ResourceFactory::resolveResource($resourceClass); /** @phpstan-ignore-line */
 
