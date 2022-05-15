@@ -1,8 +1,9 @@
 <?php
 
-namespace Magdonia\LaravelFactories\Tests\Stubs;
+namespace Magdonia\LaravelFactories\Tests\Factories\Requests;
 
 use Magdonia\LaravelFactories\RequestFactory;
+use Magdonia\LaravelFactories\Tests\Http\Requests\SimpleRequest;
 
 /**
  * @extends RequestFactory<AnotherRequestFactory>

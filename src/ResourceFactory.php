@@ -20,17 +20,32 @@ use JsonSerializable;
  */
 abstract class ResourceFactory
 {
+    protected ?string $wrapper = 'data';
+
     /** @var class-string<JsonResource> */
     protected string $resource;
+
+    /** @var array<string, array<string, string>> */
+    protected array $loaded = [];
+
     protected Request $request;
+
     protected Authenticatable $user;
+
     protected Model $model;
+
     protected Model|Collection|LengthAwarePaginator $resources;
+
     protected int $currentPage;
+
     protected int $from;
+
     protected int $to;
+
     protected int $total;
+
     protected int $lastPage;
+
     protected int $perPage;
 
     public function __construct()
@@ -172,7 +187,9 @@ abstract class ResourceFactory
                         $this->resources->each(function ($item, $key) use ($json) {
                             $this->model = $item;
                             $json
-                                ->has($key, $this->definition());
+                                ->has($key, function (AssertableJson $json) {
+                                    $this->assert($json);
+                                });
                         });
                     })
                     ->has('meta', function (AssertableJson $json) {
@@ -192,25 +209,76 @@ abstract class ResourceFactory
 
         if ($this->resources instanceof Collection) {
             return function (AssertableJson $json) {
-                $json
-                    ->has('data', function (AssertableJson $json) {
-                        /** @phpstan-ignore-next-line  */
-                        $this->resources->each(function ($item, $key) use ($json) {
-                            $this->model = $item;
-                            $json
-                                ->has($key, $this->definition());
+                if ($this->wrapper) {
+                    $json
+                        ->has($this->wrapper, function (AssertableJson $json) {
                         });
+                } else {
+                    /** @phpstan-ignore-next-line  */
+                    $this->resources->each(function ($item, $key) use ($json) {
+                        $this->model = $item;
+                        $json
+                            ->has($key, function (AssertableJson $json) {
+                                $this->assert($json);
+                            });
                     });
+                }
             };
         }
 
         $this->model = $this->resources;
 
         return function (AssertableJson $json) {
-            $json
-                ->has('data', $this->definition());
+            if ($this->wrapper) {
+                $json
+                    ->has('data', function (AssertableJson $json) {
+                        $this->assert($json);
+                    });
+            } else {
+                $this->assert($json);
+            }
         };
     }
 
-    abstract public function definition(): Closure;
+    abstract public function definition(AssertableJson $json): void;
+
+    /**
+     * @param string $key
+     * @param class-string<JsonResource> $resource
+     * @param string|null $relation
+     * @return $this
+     */
+    public function with(string $key, string $resource, ?string $relation = null): static
+    {
+        $this->loaded[$key] = ['resource' => $resource, 'relation' => $relation ?? $key];
+
+        return $this;
+    }
+
+    /**
+     * @param string|null $wrapper
+     * @return $this
+     */
+    public function wrapper(?string $wrapper): static
+    {
+        $this->wrapper = $wrapper;
+
+        return $this;
+    }
+
+    protected function assert(AssertableJson $json): void
+    {
+        $this->definition($json);
+
+        foreach ($this->loaded as $key => $definition) {
+            $resource = $definition['resource'];
+            $relation = $definition['relation'];
+
+            if ($this->model->$relation instanceof Model) {
+                $json->has($key, $resource::factory()->model($this->model->$relation)->wrapper(null)->create());
+            } else {
+                $json->has($key, $resource::factory()->collection($this->model->$relation)->wrapper(null)->create());
+            }
+        }
+    }
 }

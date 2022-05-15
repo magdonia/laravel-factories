@@ -102,6 +102,7 @@ abstract class RequestFactory
      */
     public static function resolveFactory(string $requestClass): string
     {
+
         /** @phpstan-ignore-next-line  */
         return Str::of($requestClass)
             ->prepend(config('laravel-factories.default-request-factories-directory'))

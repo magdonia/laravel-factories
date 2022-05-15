@@ -9,13 +9,12 @@ use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Magdonia\LaravelFactories\RequestFactory;
-use Magdonia\LaravelFactories\Tests\Stubs\AnotherRequestFactory;
-use Magdonia\LaravelFactories\Tests\Stubs\AuthenticatedRequest;
-use Magdonia\LaravelFactories\Tests\Stubs\ConfiguredRequest;
-use Magdonia\LaravelFactories\Tests\Stubs\NewRequest;
-use Magdonia\LaravelFactories\Tests\Stubs\SimpleRequest;
-use Magdonia\LaravelFactories\Tests\Stubs\SimpleRequestFactory;
-use Orchestra\Testbench\TestCase;
+use Magdonia\LaravelFactories\Tests\Factories\Requests\AnotherRequestFactory;
+use Magdonia\LaravelFactories\Tests\Factories\Requests\SimpleRequestFactory;
+use Magdonia\LaravelFactories\Tests\Http\Requests\AuthenticatedRequest;
+use Magdonia\LaravelFactories\Tests\Http\Requests\ConfiguredRequest;
+use Magdonia\LaravelFactories\Tests\Http\Requests\NewRequest;
+use Magdonia\LaravelFactories\Tests\Http\Requests\SimpleRequest;
 
 class RequestFactoryTest extends TestCase
 {

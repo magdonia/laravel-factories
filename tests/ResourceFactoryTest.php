@@ -10,12 +10,14 @@ use Illuminate\Testing\AssertableJsonString;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Illuminate\Testing\TestResponse;
 use Magdonia\LaravelFactories\ResourceFactory;
-use Magdonia\LaravelFactories\Tests\Stubs\AnotherResource;
-use Magdonia\LaravelFactories\Tests\Stubs\ForAnotherResourceFactory;
-use Magdonia\LaravelFactories\Tests\Stubs\SimpleResource;
-use Magdonia\LaravelFactories\Tests\Stubs\SimpleResourceFactory;
-use Magdonia\LaravelFactories\Tests\Stubs\User;
-use Orchestra\Testbench\TestCase;
+use Magdonia\LaravelFactories\Tests\Factories\Resources\ForAnotherResourceFactory;
+use Magdonia\LaravelFactories\Tests\Factories\Resources\SimpleResourceFactory;
+use Magdonia\LaravelFactories\Tests\Http\Resources\AnotherResource;
+use Magdonia\LaravelFactories\Tests\Http\Resources\PostResource;
+use Magdonia\LaravelFactories\Tests\Http\Resources\SimpleResource;
+use Magdonia\LaravelFactories\Tests\Http\Resources\UserResource;
+use Magdonia\LaravelFactories\Tests\Models\Post;
+use Magdonia\LaravelFactories\Tests\Models\User;
 
 class ResourceFactoryTest extends TestCase
 {
@@ -390,7 +392,7 @@ class ResourceFactoryTest extends TestCase
     public function test_it_should_make_an_instance_from_resource(): void
     {
         $model = new User();
-        /** @var SimpleResource $resource */
+        /** @var \Magdonia\LaravelFactories\Tests\Http\Resources\SimpleResource $resource */
         $resource = SimpleResource::factory()->model($model)->make();
 
         $this->assertInstanceOf(SimpleResource::class, $resource);
@@ -407,5 +409,65 @@ class ResourceFactoryTest extends TestCase
         $request->setUserResolver(fn () => $auth);
 
         $this->assertSame($resource->toArray($request), AnotherResource::factory()->user($auth)->model($model)->toArray());
+    }
+
+    public function test_it_should_assert_when_loaded_relations(): void
+    {
+        $user = User::factory()->create();
+        $post = Post::factory()->for($user, 'creator')->create();
+
+        $assertableJson = PostResource::factory()
+            ->model($post->load('creator'))
+            ->with('creator', UserResource::class)
+            ->create();
+
+        $assert = AssertableJson::fromAssertableJsonString(new AssertableJsonString([
+            'data' => [
+                'title' => $post->title,
+                'description' => $post->description,
+                'creator' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ],
+            ],
+        ]));
+
+        $assertableJson($assert);
+
+        $assert->interacted();
+    }
+
+    public function test_it_should_assert_when_loaded_has_many_relation(): void
+    {
+        $user = User::factory()->create();
+        $posts = Post::factory()->for($user, 'creator')->count(2)->create();
+
+        $assertableJson = UserResource::factory()
+            ->model($user->load('posts'))
+            ->with('posts', PostResource::class)
+            ->create();
+
+        $assert = AssertableJson::fromAssertableJsonString(new AssertableJsonString([
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'posts' => [
+                    [
+                        'title' => $posts->first()->title,
+                        'description' => $posts->first()->description,
+                    ],
+                    [
+                        'title' => $posts->last()->title,
+                        'description' => $posts->last()->description,
+                    ],
+                ],
+            ],
+        ]));
+
+        $assertableJson($assert);
+
+        $assert->interacted();
     }
 }
