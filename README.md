@@ -337,7 +337,15 @@ public function test_it_should_return_single_resource_response(): void
             'title' => $post->title,
             'description' => $post->description,
         ]
-    ], PostResource::factory()->model($post)->response())
+    ], PostResource::factory()->model($post)->json());
+    
+    // usage with response
+    PostResource::factory()->model($post)->response()
+        ->assertJsonStructure(['data' => [
+            'id',
+            'title',
+            'description',
+        ]]);
 }
 ```
 Collection resource
@@ -358,7 +366,7 @@ public function test_it_should_return_collection_resource_response(): void
                 'description' => $posts->last()->description,
             ]
         ],
-    ], PostResource::factory()->collection($posts)->response())
+    ], PostResource::factory()->collection($posts)->json())
 }
 ```
 Pagination resource
@@ -412,7 +420,7 @@ public function test_it_should_return_pagination_resource_response(): void
                 'next' => null,
             ],
         ],
-    ], PostResource::factory()->pagination(Post::paginate())->response())
+    ], PostResource::factory()->pagination(Post::paginate())->json())
 }
 ```
 ## Installation

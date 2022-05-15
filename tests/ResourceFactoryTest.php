@@ -7,6 +7,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Testing\AssertableJsonString;
 use Illuminate\Testing\Fluent\AssertableJson;
+use Illuminate\Testing\TestResponse;
 use Magdonia\LaravelFactories\ResourceFactory;
 use Magdonia\LaravelFactories\Tests\Stubs\AnotherResource;
 use Magdonia\LaravelFactories\Tests\Stubs\ForAnotherResourceFactory;
@@ -121,8 +122,19 @@ class ResourceFactoryTest extends TestCase
         $model = new User();
         $model->username = $username;
 
+        $response = SimpleResource::factory()->model($model)->json();
+        $this->assertEquals((new SimpleResourceFactory())->model($model)->json(), $response);
+    }
+
+    public function test_it_should_return_resource_response(): void
+    {
+        $username = $this->faker->userName();
+        $model = new User();
+        $model->username = $username;
+
         $response = SimpleResource::factory()->model($model)->response();
-        $this->assertEquals((new SimpleResourceFactory())->model($model)->response(), $response);
+        $this->assertInstanceOf(TestResponse::class, $response);
+        $this->assertEquals((new SimpleResourceFactory())->model($model)->json(), $response->json());
     }
 
     public function test_json_response(): void
@@ -131,7 +143,18 @@ class ResourceFactoryTest extends TestCase
         $model = new User();
         $model->username = $username;
 
-        $this->assertEquals(['data' => ['username' => $username]], SimpleResource::factory()->model($model)->response());
+        $this->assertEquals(['data' => ['username' => $username]], SimpleResource::factory()->model($model)->json());
+    }
+
+    public function test_response(): void
+    {
+        $username = $this->faker->userName();
+        $model = new User();
+        $model->username = $username;
+
+        $factory = SimpleResource::factory()->model($model);
+
+        $this->assertEquals($factory->json(), $factory->response()->json());
     }
 
     public function test_json_response_with_given_authenticated_user(): void
@@ -144,7 +167,22 @@ class ResourceFactoryTest extends TestCase
         $model = new User();
         $model->username = $username2;
 
-        $this->assertEquals(['data' => ['auth' => $username1, 'username' => $username2]], AnotherResource::factory()->user($auth)->model($model)->response());
+        $this->assertEquals(['data' => ['auth' => $username1, 'username' => $username2]], AnotherResource::factory()->user($auth)->model($model)->json());
+    }
+
+    public function test_response_with_given_authenticated_user(): void
+    {
+        $username1 = $this->faker->userName();
+        $auth = new \Illuminate\Foundation\Auth\User();
+        $auth->username = $username1;
+
+        $username2 = $this->faker->userName();
+        $model = new User();
+        $model->username = $username2;
+
+        $factory = AnotherResource::factory()->user($auth)->model($model);
+
+        $this->assertEquals($factory->json(), $factory->response()->json());
     }
 
     public function test_json_with_collection(): void
@@ -167,7 +205,7 @@ class ResourceFactoryTest extends TestCase
                     'username' => $username2,
                 ],
             ],
-        ], SimpleResource::factory()->collection($collection)->response());
+        ], SimpleResource::factory()->collection($collection)->json());
     }
 
     public function test_pagination_response(): void
@@ -222,7 +260,7 @@ class ResourceFactoryTest extends TestCase
                 'prev' => null,
                 'next' => null,
             ],
-        ], SimpleResource::factory()->pagination($pagination)->response());
+        ], SimpleResource::factory()->pagination($pagination)->json());
     }
 
     public function test_it_should_create_an_assertable_json_for_single_resource(): void
