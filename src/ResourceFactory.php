@@ -5,6 +5,7 @@ namespace Magdonia\LaravelFactories;
 use Closure;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -12,6 +13,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Illuminate\Testing\TestResponse;
+use JsonSerializable;
 
 /**
  * @template TResourceFactory
@@ -20,6 +22,7 @@ abstract class ResourceFactory
 {
     /** @var class-string<JsonResource> */
     protected string $resource;
+    protected Request $request;
     protected Authenticatable $user;
     protected Model $model;
     protected Model|Collection|LengthAwarePaginator $resources;
@@ -29,6 +32,11 @@ abstract class ResourceFactory
     protected int $total;
     protected int $lastPage;
     protected int $perPage;
+
+    public function __construct()
+    {
+        $this->request = new Request();
+    }
 
     /**
      * @param class-string<JsonResource> $resourceClass
@@ -105,6 +113,10 @@ abstract class ResourceFactory
     {
         $this->user = $user;
 
+        $this->request->setUserResolver(function () {
+            return $this->user;
+        });
+
         return $this;
     }
 
@@ -114,29 +126,32 @@ abstract class ResourceFactory
 
         if (isset($this->resources)) {
             if ($this->resources instanceof Model) {
-                return new $class($this->resources);
+                $response = new $class($this->resources);
+            } else {
+                $response = $class::collection($this->resources);
             }
-
-            return $class::collection($this->resources);
+        } else {
+            $response = new $class();
         }
 
-        return new $class();
+        return $response;
     }
 
     public function response(): TestResponse
     {
         $resource = $this->make();
 
-        $request = new Request();
-
-        if (isset($this->user)) {
-            $request->setUserResolver(function () {
-                return $this->user;
-            });
-        }
-
         /** @phpstan-ignore-next-line  */
-        return new TestResponse($resource->toResponse($request));
+        return new TestResponse($resource->toResponse($this->request));
+    }
+
+    /**
+     * @return array|Arrayable|JsonSerializable
+     */
+    /** @phpstan-ignore-next-line  */
+    public function toArray()
+    {
+        return $this->make()->toArray($this->request);
     }
 
     /**

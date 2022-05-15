@@ -3,6 +3,7 @@
 namespace Magdonia\LaravelFactories\Tests;
 
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Testing\AssertableJsonString;
@@ -394,5 +395,17 @@ class ResourceFactoryTest extends TestCase
 
         $this->assertInstanceOf(SimpleResource::class, $resource);
         $this->assertSame($model, $resource->resource);
+    }
+
+    public function test_it_should_return_to_array_from_resource_on_array_method(): void
+    {
+        $auth = new \Illuminate\Foundation\Auth\User();
+        $model = new User();
+        $resource = new AnotherResource($model);
+
+        $request = new Request();
+        $request->setUserResolver(fn () => $auth);
+
+        $this->assertSame($resource->toArray($request), AnotherResource::factory()->user($auth)->model($model)->toArray());
     }
 }
