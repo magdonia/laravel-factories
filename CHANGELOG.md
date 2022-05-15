@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-factories` will be documented in this file
 
+## v1.6.0 - 2022-05-15
+
+## What's Changed
+
+- Add make method for resource factories by @MortezaPoussaneh in https://github.com/magdonia/laravel-factories/pull/6
+
+**Full Changelog**: https://github.com/magdonia/laravel-factories/compare/v1.5.0...v1.6.0
+
 ## v1.5.0 - 2022-05-15
 
 ## What's Changed
