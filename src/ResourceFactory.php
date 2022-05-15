@@ -108,19 +108,24 @@ abstract class ResourceFactory
         return $this;
     }
 
-    public function response(): TestResponse
+    public function make(): JsonResource
     {
         $class = $this->resource ?? self::resolveResource(static::class);
 
         if (isset($this->resources)) {
             if ($this->resources instanceof Model) {
-                /** @var JsonResource $resource */
-                $resource = new $class($this->resources);
-            } else {
-                /** @var JsonResource $resource */
-                $resource = $class::collection($this->resources);
+                return new $class($this->resources);
             }
+
+            return $class::collection($this->resources);
         }
+
+        return new $class();
+    }
+
+    public function response(): TestResponse
+    {
+        $resource = $this->make();
 
         $request = new Request();
 
