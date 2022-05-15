@@ -560,7 +560,7 @@ $factory = UserResource::factory()->model($user);
 $factory = UserResource::factory()->collection($users);
 
 // Set a pagination for resource
-$factory = UserResource::factory()->paginate($users);
+$factory = UserResource::factory()->pagination($users);
 
 // Set authenticated user for resource
 $factory = UserResource::factory()->user($auth);
