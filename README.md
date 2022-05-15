@@ -262,7 +262,12 @@ public function test_it_should_show_a_post(): void
 {
     $post = Post::factory()->create();
     $response = $this->getJson(route('post.show', $post));
-    $response->assertJson(PostResource::factory()->model($post->load('category'))->create());
+    $response->assertJson(
+        PostResource::factory()
+            ->model($post->load('category'))
+            ->with('category', CategoryResource::class)
+            ->create()
+    );
 }
 ```
 
@@ -317,6 +322,7 @@ public function test_it_should_show_a_post(): void
     $response = $this->getJson(route('post.index'));
     $response->assertJson(
         PostResource::factory()
+            ->with('category', CategoryResource::class)
             ->pagination(
                 collection: $posts->each->load('category'),
             )
@@ -463,6 +469,53 @@ class AnotherRequestFactory extends RequestFactory
     }
 }
 ```
+How to use it?
+```php
+// Get a factory object
+$factory = PostStoreRequest::factory()->create();
+
+// Set attributes on factory
+$factory = PostStoreRequest::factory()->create(['title' => $title])
+
+// Get a form from request factory
+$form = PostStoreRequest::factory()->form();
+
+// Get a form from request factory and override or add additional fields
+$form = PostStoreRequest::factory()->form(['title' => $title, 'added' => 'something']);
+
+// Add states for request form
+$form = PostStoreRequest::factory()->category($category)->form();
+
+// Set values on request form
+$form = PostStoreRequest::factory()->set($key, $value)->form();
+
+// Unset values on request form
+$form = PostStoreRequest::factory()->unset($key)->form();
+$form = PostStoreRequest::factory()->unset([$key1, $key2])->form();
+
+// Validate a form request
+PostStoreRequest::factory()->validate()
+    ->assertJsonValidationErrors('title');
+PostStoreRequest::factory()->validate(['title' => null])
+    ->assertJsonMissingValidationErrors('title');
+
+// Get a request instance from factory
+$postStoreRequest = PostStoreRequest::factory()->make();
+$postStoreRequest = PostStoreRequest::factory()->make(['title' => $title]);
+
+// Set authenticated user for request instance
+$postStoreRequest = PostStoreRequest::factory()->asGuest()->make();
+$postStoreRequest = PostStoreRequest::factory()->as($user)->make();
+
+// Set method for request
+$postStoreRequest = PostStoreRequest::factory()->method($method)->make();
+
+// Set route params
+$postStoreRequest = PostStoreRequest::factory()->routeParam($key, $value)->make();
+
+// Set route
+$postStoreRequest = PostStoreRequest::factory()->route('welcome')->make();
+```
 ### Resources
 Add the `HasResourceFactory` trait to your resource classes:
 
@@ -495,8 +548,73 @@ class AnotherResourceFactory extends ResourceFactory
 }
 ```
 
-> **_NOTE:_** You can modify factory's directory to be anything you want in config.
+How to use it?
+```php
+// Get a factory object
+$factory = UserResource::factory();
 
+// Set a single model for resource
+$factory = UserResource::factory()->model($user);
+
+// Set a collection for resource
+$factory = UserResource::factory()->collection($users);
+
+// Set a pagination for resource
+$factory = UserResource::factory()->paginate($users);
+
+// Set authenticated user for resource
+$factory = UserResource::factory()->user($auth);
+
+// Get a json response from resource
+$array = UserResource::factory()->model($user)->json();
+$array = UserResource::factory()->collection($users)->json();
+$array = UserResource::factory()->pagination($users)->json();
+
+// Get a response object from resource
+$testResponse = UserResource::factory()->model($user)->response();
+$testResponse = UserResource::factory()->collection($users)->response();
+$testResponse = UserResource::factory()->pagination($users)->response();
+
+// Get a resource object from resource
+$userResource = UserResource::factory()->model($user)->make();
+$userResource = UserResource::factory()->collection($users)->make();
+$userResource = UserResource::factory()->pagination($users)->make();
+
+// Assert response
+/** @var TestResponse $response */
+$response->assertJson(UserResource::factory()->model($user)->create());
+$response->assertJson(UserResource::factory()->user($auth)->model($user)->create());
+$response->assertJson(UserResource::factory()->collection($users)->create());
+$response->assertJson(UserResource::factory()->pagination($users)->create());
+
+// Change wrapper
+$response->assertJson(UserResource::factory()->wrapper('anything')->model($user)->create());
+
+// Assertion loaded relations
+$response->assertJson(
+    PostResource::factory()
+    ->model($post->load('creator'))
+    ->with('creator', UserResource::class)
+    ->create()
+);
+
+$response->assertJson(
+    UserResource::factory()
+    ->model($user->load('posts'))
+    ->with('posts', PostCollection::class)
+    ->create()
+);
+
+// Assertion loaded relations with different relation name
+$response->assertJson(
+    UserResource::factory()
+    ->model($user->load('posts'))
+    ->with('latest_posts', PostCollection::class, 'posts')
+    ->create()
+);
+```
+
+> **_NOTE:_** You can modify factory's directory to be anything you want in config.
 ### Testing
 
 ```bash

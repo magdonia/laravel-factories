@@ -1,10 +1,10 @@
 <?php
 
-namespace Magdonia\LaravelFactories\Tests\Stubs;
+namespace Magdonia\LaravelFactories\Tests\Factories\Resources;
 
-use Closure;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Magdonia\LaravelFactories\ResourceFactory;
+use Magdonia\LaravelFactories\Tests\Models\User;
 
 /**
  * @extends ResourceFactory<SimpleResourceFactory>
@@ -12,10 +12,8 @@ use Magdonia\LaravelFactories\ResourceFactory;
  */
 class SimpleResourceFactory extends ResourceFactory
 {
-    public function definition(): Closure
+    public function definition(AssertableJson $json): void
     {
-        return function (AssertableJson $json) {
-            $json->where('username', $this->model->username);
-        };
+        $json->where('username', $this->model->username);
     }
 }

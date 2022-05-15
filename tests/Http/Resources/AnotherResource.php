@@ -1,12 +1,14 @@
 <?php
 
-namespace Magdonia\LaravelFactories\Tests\Stubs;
+namespace Magdonia\LaravelFactories\Tests\Http\Resources;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Magdonia\LaravelFactories\Concerns\HasResourceFactory;
 use Magdonia\LaravelFactories\ResourceFactory;
+use Magdonia\LaravelFactories\Tests\Factories\Resources\ForAnotherResourceFactory;
+use Magdonia\LaravelFactories\Tests\Models\User;
 
 /**
  * @mixin User
