@@ -385,4 +385,14 @@ class ResourceFactoryTest extends TestCase
 
         $assert->interacted();
     }
+
+    public function test_it_should_make_an_instance_from_resource(): void
+    {
+        $model = new User();
+        /** @var SimpleResource $resource */
+        $resource = SimpleResource::factory()->model($model)->make();
+
+        $this->assertInstanceOf(SimpleResource::class, $resource);
+        $this->assertSame($model, $resource->resource);
+    }
 }
