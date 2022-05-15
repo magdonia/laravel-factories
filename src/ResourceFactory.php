@@ -212,6 +212,14 @@ abstract class ResourceFactory
                 if ($this->wrapper) {
                     $json
                         ->has($this->wrapper, function (AssertableJson $json) {
+                            /** @phpstan-ignore-next-line  */
+                            $this->resources->each(function ($item, $key) use ($json) {
+                                $this->model = $item;
+                                $json
+                                    ->has($key, function (AssertableJson $json) {
+                                        $this->assert($json);
+                                    });
+                            });
                         });
                 } else {
                     /** @phpstan-ignore-next-line  */
