@@ -120,7 +120,7 @@ abstract class ResourceFactory
             return $class::collection($this->resources);
         }
 
-        return new $class;
+        return new $class();
     }
 
     public function response(): TestResponse
