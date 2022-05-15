@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-factories` will be documented in this file
 
+## v1.4.2 - 2022-05-15
+
+## What's Changed
+
+- Fix resolve from config by @MortezaPoussaneh in https://github.com/magdonia/laravel-factories/pull/4
+
+**Full Changelog**: https://github.com/magdonia/laravel-factories/compare/v1.4.1...v1.4.2
+
 ## v1.4.1 - 2022-05-13
 
 ## What's Changed
