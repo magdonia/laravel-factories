@@ -108,10 +108,7 @@ abstract class ResourceFactory
         return $this;
     }
 
-    /**
-     * @return array<string|int, mixed>
-     */
-    public function response(): array
+    public function response(): TestResponse
     {
         $class = $this->resource ?? self::resolveResource(static::class);
 
@@ -134,7 +131,15 @@ abstract class ResourceFactory
         }
 
         /** @phpstan-ignore-next-line  */
-        return (new TestResponse($resource->toResponse($request)))->json();
+        return new TestResponse($resource->toResponse($request));
+    }
+
+    /**
+     * @return array<string|int, mixed>
+     */
+    public function json(): array
+    {
+        return $this->response()->json();
     }
 
     public function create(): Closure
