@@ -590,6 +590,9 @@ $response->assertJson(UserResource::factory()->pagination($users)->create());
 // Change wrapper
 $response->assertJson(UserResource::factory()->wrapper('anything')->model($user)->create());
 
+// Remove wrapper
+$response->assertJson(UserResource::factory()->wrapper(null)->model($user)->create());
+
 // Assertion loaded relations
 $response->assertJson(
     PostResource::factory()
