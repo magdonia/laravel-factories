@@ -2,6 +2,19 @@
 
 All notable changes to `laravel-factories` will be documented in this file
 
+## v1.8.1 - 2022-11-25
+
+### What's Changed
+
+- Bump actions/dependency-review-action from 1 to 2 by @dependabot in https://github.com/magdonia/laravel-factories/pull/9
+- Bump dependabot/fetch-metadata from 1.3.1 to 1.3.3 by @dependabot in https://github.com/magdonia/laravel-factories/pull/10
+- Bump dependabot/fetch-metadata from 1.3.3 to 1.3.4 by @dependabot in https://github.com/magdonia/laravel-factories/pull/11
+- Bump dependabot/fetch-metadata from 1.3.4 to 1.3.5 by @dependabot in https://github.com/magdonia/laravel-factories/pull/12
+- Bump actions/dependency-review-action from 2 to 3 by @dependabot in https://github.com/magdonia/laravel-factories/pull/13
+- Bump ramsey/composer-install from 1 to 2 by @dependabot in https://github.com/magdonia/laravel-factories/pull/14
+
+**Full Changelog**: https://github.com/magdonia/laravel-factories/compare/v1.8.0...v1.8.1
+
 ## v1.8.0 - 2022-05-15
 
 ## What's Changed
